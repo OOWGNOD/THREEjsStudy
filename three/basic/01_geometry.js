@@ -1,5 +1,7 @@
 import * as THREE from '../build/three.module.js';
 import { OrbitControls } from "../examples/jsm/controls/OrbitControls.js"
+import { FontLoader } from "../examples/jsm/loaders/FontLoader.js"
+import { TextGeometry } from "../examples/jsm/geometries/TextGeometry.js"
 
 class App {
     constructor() {
@@ -306,14 +308,14 @@ class App {
 // ==================================================
 
 _setupModel() {
-    const fontLoader = new THREE.FontLoader();
+    const fontLoader = new FontLoader();
     async function loadFont(that) {
         const url = "../examples/fonts/helvetiker_regular.typeface.json";
         const font = await new Promise((resolve, reject) => {
             fontLoader.load(url, resolve, undefined, reject);
         });
 
-    const geometry = new THREE.TextGeometry("DONGWOO", {
+    const geometry = new TextGeometry("DONGWOO", {
         font: font, // Fontloader에서 얻어온 폰트 객체
         size: 5, // 크기
         height: 1.5, // 깊이값 [기본값 50]
