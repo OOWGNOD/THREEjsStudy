@@ -65,29 +65,49 @@ class App {
 
 // vertices의 구성 좌표대로 라인으로 연결돼 생성
 //  Line, Linesegments , LineLoop 등이 있음
+    // _setupModel() {
+    //     const vertices = [
+    //         -1, 1, 0,
+    //         1, 1, 0,
+    //         -1 ,-1 ,0,
+    //         1, -1, 0
+    //     ];
+
+    //     const geometry = new THREE.BufferGeometry();
+    //     geometry.setAttribute("position",
+    //     new THREE.Float32BufferAttribute(vertices, 3));
+
+    //     const material = new THREE.LineDashedMaterial({
+    //         color: 0xffff00,
+    //         dashSize: 0.2,
+    //         gapSize: 0.1,
+    //         scale: 2
+    //     });
+
+    //     const line = new THREE.LineLoop(geometry, material);
+    //     this._scene.add(line);
+    // }
     _setupModel() {
-        const vertices = [
-            -1, 1, 0,
-            1, 1, 0,
-            -1 ,-1 ,0,
-            1, -1, 0
-        ];
-
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute("position",
-        new THREE.Float32BufferAttribute(vertices, 3));
-
-        const material = new THREE.LineDashedMaterial({
+        const material = new THREE.MeshBasicMaterial({
+            visible : true,
+            transparent: false,
+            opcity: 1,
+            depthTest: true,
+            depthWrite: true,
+            side: THREE.FrontSide,
+            
             color: 0xffff00,
-            dashSize: 0.2,
-            gapSize: 0.1,
-            scale: 2
+            wireframe: false
         });
 
-        const line = new THREE.LineLoop(geometry, material);
-        this._scene.add(line);
-    }
+        const box = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+        box.position.set(-1, 0, 0);
+        this._scene.add(box);
 
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), material);
+        sphere.position.set(1, 0, 0);
+        this._scene.add(sphere);
+}
     _setupCamera() {
         const camera = new THREE.PerspectiveCamera(
             75, 
@@ -96,7 +116,7 @@ class App {
             100
         );
 
-        camera.position.z = 15;
+        camera.position.z = 3;
         this._camera = camera;
     }
 
