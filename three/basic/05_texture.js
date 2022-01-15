@@ -1,5 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { OrbitControls } from "../examples/jsm/controls/OrbitControls.js"
+import { VertexNormalsHelper } from "../examples/jsm/helpers/VertexNormalsHelper.js"
 
 class App {
     constructor() {
@@ -134,44 +135,70 @@ class App {
     //         wireframe: false
     //     });
 
+// ======== Texture map  =========================================================
+
+// _setupModel() {
+//         const textureLoader = new THREE.TextureLoader();
+//         const map = textureLoader.load(
+//             "../examples/textures/uv_grid_opengl.jpg",
+//             texture => {
+//                 texture.repeat.x = 1; // 기본값 1
+//                 texture.repeat.y = 1; // 기본값 1
+
+//                 texture.wrapS = THREE.ClampToEdgeWrapping;
+//                 texture.wrapT = THREE.ClampToEdgeWrapping;
+                
+//                 texture.offset.x = 0; // 기본값 0
+//                 texture.offset.y = 0; // 기본값 0
+
+//                 texture.rotation = THREE.MathUtils.degToRad(45);
+
+//                 texture.center.x = 0.5;
+//                 texture.center.y = 0.5;
+
+//                 texture.magFilter = THREE.LinearFilter;
+//                 texture.minFilter = THREE.NearestMipMapLinearFilter;
+//             }
+//         )
+
 // =================================================================
 
-_setupModel() {
-        const textureLoader = new THREE.TextureLoader();
-        const map = textureLoader.load(
-            "../examples/textures/uv_grid_opengl.jpg",
-            texture => {
-                texture.repeat.x = 1; // 기본값 1
-                texture.repeat.y = 1; // 기본값 1
 
-                texture.wrapS = THREE.ClampToEdgeWrapping;
-                texture.wrapT = THREE.ClampToEdgeWrapping;
-                
-                texture.offset.x = 0; // 기본값 0
-                texture.offset.y = 0; // 기본값 0
-
-                texture.rotation = THREE.MathUtils.degToRad(45);
-
-                texture.center.x = 0.5;
-                texture.center.y = 0.5;
-
-                texture.magFilter = THREE.LinearFilter;
-                texture.minFilter = THREE.NearestMipMapLinearFilter;
-            }
-        )
+        _setupModel() {
+            const textureLoader = new THREE.TextureLoader();
+            
+            const map = textureLoader.load("image/glass/Glass_Window_002_ambientOcclusion.jpg");
+            const mapAO = textureLoader.load("image/glass/Glass_Window_002_basecolor.jpg");
+            const mapHeight = textureLoader.load("image/glass/Glass_Window_002_height.png");
+            const mapNormal = textureLoader.load("image/glass/Glass_Window_002_normal.jpg");
+            const mapRoughness = textureLoader.load("image/glass/Glass_Window_002_roughness.jpg");
+            const mapMetalic = textureLoader.load("image/glass/Glass_Window_002_metallic.jpg");
+            const mapAlpha = textureLoader.load("image/glass/Glass_Window_002_opacity.jpg");
+        
     
 
     const material = new THREE.MeshStandardMaterial({
-        map: map
+        // map: map,
+        normalMap: mapNormal, // 법선 벡터를 이미지화해서 저장 법선벡터(광원에 대한 에너지양 계산)
+        
+        displacementMap: mapHeight, // 구성좌표
+        displacementScale: 0.2, // 변이 정도
+        displacementBias: -0.15,
     });
 
-        const box = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+        const box = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 256, 256, 256), material);
         box.position.set(-1, 0, 0);
         this._scene.add(box);
 
-        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), material);
+        // const boxHelper = new VertexNormalsHelper(box, 0.1, 0xffff00);
+        // this._scene.add(boxHelper);
+
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.7, 512, 512), material);
         sphere.position.set(1, 0, 0);
         this._scene.add(sphere);
+
+        // const sphereHelper = new VertexNormalsHelper(sphere, 0.1, 0xffff00);
+        // this._scene.add(sphereHelper);
 
     }
     _setupCamera() {
@@ -184,14 +211,16 @@ _setupModel() {
 
         camera.position.z = 3;
         this._camera = camera;
+        this._scene.add(camera);
     }
 
     _setupLight() {
         const color = 0xffffff;
-        const intensity = 2;
-        const light = new THREE.RectAreaLight(color, intensity);
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
         light.position.set(-1, 2, 4);
-        this._scene.add(light);
+        // this._scene.add(light);
+        this._camera.add(light);
     }
 
     update(time) {
